@@ -2,10 +2,10 @@ from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql import types as spark_data_types
 from pyspark.sql.window import Window
-from pyspark.sql.functions import row_number
+import os
 
-kafka_topic_name = "ds_salaries_2"
-kafka_bootstrap_servers = "localhost:29092"
+kafka_bootstrap_servers = os.getenv('KAFKA_HOST')  if os.getenv('KAFKA_HOST') is not None else "localhost:29092"
+kafka_topic_name = os.environ.get('KAFKA_TOPIC') if os.environ.get('KAFKA_TOPIC') is not None else "ds_salaries_2"
 
 spark = (
     SparkSession.builder.config(

@@ -4,11 +4,12 @@ from datetime import datetime
 import time
 import random
 import numpy as np
+import os
 
 # pip install kafka-python
 
-KAFKA_TOPIC_NAME_CONS = "ds_salaries_2"
-KAFKA_BOOTSTRAP_SERVERS_CONS = 'localhost:29092'
+KAFKA_TOPIC_NAME_CONS = os.environ.get('KAFKA_TOPIC') if os.environ.get('KAFKA_TOPIC') is not None else "ds_salaries_2"
+KAFKA_BOOTSTRAP_SERVERS_CONS =  os.getenv('KAFKA_HOST')  if os.getenv('KAFKA_HOST') is not None else "localhost:29092"
 
 if __name__ == "__main__":
     print("Kafka Producer Application Started ... ")

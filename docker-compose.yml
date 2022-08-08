@@ -21,3 +21,14 @@ services:
       KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,PLAINTEXT_HOST:PLAINTEXT
       KAFKA_INTER_BROKER_LISTENER_NAME: PLAINTEXT
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+
+  spark-streaming:
+    platform: linux/amd64
+    build: .
+    environment:
+      KAFKA_HOST: kafka:9092
+      KAFKA_TOPIC: ds_salaries_2
+    depends_on:
+      - kafka
+      - zookeeper
+
