@@ -14,24 +14,11 @@ df.createOrReplaceTempView("tb_salaries")
 
 aggregation_with_grouping = spark.sql(
     """
-        select * from (
             select 
             job_title as key,
             avg(salary_in_usd) as value
         from tb_salaries
         group by key
-        ) as a
-        left join (
-            select 
-            job_title as key, 
-            salary_in_usd,
-            rank() over (
-                partition by job_title
-                order by salary_in_usd
-            ) as rnk
-        from tb_salaries
-        ) as b
-        on a.key = b.key
         
     """
 )
