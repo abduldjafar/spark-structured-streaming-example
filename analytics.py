@@ -2,6 +2,8 @@
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
 from pyspark.sql import types as spark_data_types
+from pyspark.sql.window import Window
+
 
 
 spark = SparkSession.builder.master("local[1]") \
@@ -52,6 +54,11 @@ ranking_functions = spark.sql(
     """
 )
 
+windowSpec  = Window.partitionBy("job_title").orderBy("salary_in_usd")
+df.select("job_title","salary_in_usd").withColumn("row_number",row_number().over(windowSpec)) \
+    .show(truncate=False)
+
+
 analytic_functions = spark.sql(
     """
         select 
@@ -65,6 +72,8 @@ analytic_functions = spark.sql(
     """
 )
 
+
+
 aggregation_with_rollups = spark.sql(
     """
     select 
@@ -75,6 +84,7 @@ aggregation_with_rollups = spark.sql(
     """
 )
 
+df.select("job_title","salary_in_usd").withColumnRenamed("job_title","key").cube("key").agg(mean('salary_in_usd'), count('salary_in_usd')).show()
 aggregation_with_cube = spark.sql(
     """
     select 
