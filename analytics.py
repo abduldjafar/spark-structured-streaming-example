@@ -1,6 +1,7 @@
 
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import *
+from pyspark.sql import types as spark_data_types
 
 
 spark = SparkSession.builder.master("local[1]") \
@@ -23,6 +24,9 @@ aggregation_with_grouping = spark.sql(
     """
 )
 
+df.select("job_title", "salary_in_usd").withColumnRenamed("job_title","key").groupBy("key").agg(mean('salary_in_usd'), count('salary_in_usd'))
+
+
 aggregation_with_pivoting = spark.sql(
     """
     SELECT tb_salaries.*,tb_salaries.id as key FROM tb_salaries
@@ -32,6 +36,8 @@ aggregation_with_pivoting = spark.sql(
     )
     """
 ).select("key",to_json(struct("*"))).withColumnRenamed("to_json(struct(key, value))","value")
+
+df.select("id","job_title","salary_in_usd").withColumn("salary_in_usd",df.salary_in_usd.cast(spark_data_types.DoubleType())).groupBy("id").pivot("job_title").sum("salary_in_usd")
 
 ranking_functions = spark.sql(
     """
@@ -78,5 +84,3 @@ aggregation_with_cube = spark.sql(
         group by cube(key)
     """
 ).select("key",to_json(struct("*"))).withColumnRenamed("to_json(struct(key, value))","value")
-
-aggregation_with_grouping.show(truncate=False)
