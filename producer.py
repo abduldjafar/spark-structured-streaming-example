@@ -22,6 +22,7 @@ if __name__ == "__main__":
     flower_df = pd.read_csv(filepath)
     
     flower_list = flower_df.to_dict(orient="records")
+    print(flower_list)
        
 
     message_list = []

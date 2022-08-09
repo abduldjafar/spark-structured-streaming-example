@@ -25,7 +25,7 @@ df_from_kafka = (
     .option("subscribe", kafka_topic_name)
     .load()
 )
-
+# value|timestamp
 df_temp = df_from_kafka.selectExpr("CAST(value AS STRING)", "timestamp")
 datas_schema = "id INT,work_year DOUBLE,experience_level STRING,employment_type STRING,job_title STRING,salary DOUBLE,salary_currency STRING,salary_in_usd DOUBLE, employee_residence STRING,remote_ratio STRING,company_location STRING,company_size STRING"
 
@@ -37,13 +37,13 @@ df.select("salaries.*", "timestamp").withWatermark(
 ).createOrReplaceTempView("tb_salaries")
 
 
-def process_row(batch_df, batch_id):
+def process_batch(batch_df, batch_id):
 
     def write_tokafka(df,topic):
         df.select(
-        "key", to_json(struct("*")).alias("json_datas")
+        "key", to_json(struct("*")).alias("json_datas") # "key|{"id":1,"name":"abdul"}"  
     ).withColumnRenamed(
-        "json_datas", "value"
+        "json_datas", "value" # key | value
     ).selectExpr(
         "CAST(key AS STRING)", "CAST(value AS STRING)"
     ).write.format(
@@ -56,6 +56,7 @@ def process_row(batch_df, batch_id):
         "checkpointLocation",
         "/tmp/kafka-checkpointLocation/{}".format(topic),
     ).save()
+
 
     # aggregation_query_withgroup
     df_aggregation_query_withgroup = batch_df.select("job_title", "salary_in_usd").withColumnRenamed(
@@ -105,6 +106,7 @@ def process_row(batch_df, batch_id):
 
 
 query = (
-    spark.sql("select * from tb_salaries").writeStream.foreachBatch(process_row).start()
+    spark.sql("select * from tb_salaries").writeStream.foreachBatch(process_batch).start()
 )
+
 query.awaitTermination()
