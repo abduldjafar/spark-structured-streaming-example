@@ -107,4 +107,5 @@ def process_row(batch_df, batch_id):
 query = (
     spark.sql("select * from tb_salaries").writeStream.foreachBatch(process_row).start()
 )
+
 query.awaitTermination()
