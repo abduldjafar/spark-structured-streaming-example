@@ -57,6 +57,7 @@ def aggregation_processing(batch_df, batch_id):
         .groupBy("key")
         .agg(mean("total"), count("total"))
     )
+    
     sink_to_kafka(
         df_aggregation_query_withgroup, "aggregation_query_withgroup", kafka__servers
     )
