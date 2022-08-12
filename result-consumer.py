@@ -3,7 +3,7 @@ from json import loads
 
 
 consumer = KafkaConsumer(
-    'aggregation_with_grouping',
+    'ranking_functions',
      bootstrap_servers=['localhost:29092'],
      auto_offset_reset='earliest',
      enable_auto_commit=True,

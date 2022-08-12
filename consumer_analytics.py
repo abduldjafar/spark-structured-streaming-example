@@ -25,6 +25,7 @@ df_from_kafka = (
     .option("subscribe", kafka_topic_name)
     .load()
 )
+
 # value|timestamp
 df_temp = df_from_kafka.selectExpr("CAST(value AS STRING)", "timestamp")
 datas_schema = "id INT,work_year DOUBLE,experience_level STRING,employment_type STRING,job_title STRING,salary DOUBLE,salary_currency STRING,salary_in_usd DOUBLE, employee_residence STRING,remote_ratio STRING,company_location STRING,company_size STRING"
@@ -110,3 +111,6 @@ query = (
 )
 
 query.awaitTermination()
+
+
+
